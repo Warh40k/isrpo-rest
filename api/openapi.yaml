@@ -1,0 +1,142 @@
+openapi: 3.0.3
+info:
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: AppRepo - Get apps
+  version: 0.0.1
+servers:
+- url: http://127.0.0.1:8080/
+paths:
+  /apps:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/App'
+                type: array
+          description: Успешно
+      summary: Получение списка приложений (с пагинацией)
+      tags:
+      - Apps
+  /app:
+    get:
+      description: Обновляет приложение по значению id
+      parameters:
+      - explode: true
+        in: query
+        name: id
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/App'
+          description: Успешно
+      summary: Получение описания приложения под номером id
+      tags:
+      - Apps
+  /app/create:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_app_create_post_request'
+        description: Информация о новом приложении
+        required: true
+      responses:
+        "200":
+          description: Успешно
+        "400":
+          description: Ошибка в запросе
+      summary: Создать новое приложение
+      tags:
+      - Apps
+  /app/update:
+    patch:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_app_update_patch_request'
+      responses:
+        "200":
+          description: Успешно
+        "404":
+          description: Не найдено приложение с указанным id
+      summary: Обновить информацию о приложении
+      tags:
+      - Apps
+  /app/delete:
+    delete:
+      parameters:
+      - explode: true
+        in: query
+        name: id
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          description: Успешно
+        "404":
+          description: Приложения с нужным Id не найдено
+      summary: Удалить приложение по id
+      tags:
+      - Apps
+components:
+  schemas:
+    App:
+      example:
+        last-updated: 10-08-2023
+        name: Logseq
+        description: Graph-based note-taking app
+        id: 9
+      properties:
+        id:
+          example: 9
+          format: int64
+          type: integer
+        name:
+          example: Logseq
+          type: string
+        description:
+          example: Graph-based note-taking app
+          type: string
+        last-updated:
+          example: 10-08-2023
+          type: string
+      type: object
+    _app_create_post_request:
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required:
+      - description
+      - name
+      type: object
+    _app_update_patch_request:
+      properties:
+        id:
+          example: 1
+          type: integer
+        name:
+          example: Logseq
+          type: string
+        description:
+          example: Graph-based note taker
+          type: string
+      type: object
